@@ -1,8 +1,7 @@
+use crate::{constant::Integer, data::PlutusData};
 use bumpalo::collections::Vec as BumpVec;
+use ibig::UBig;
 use minicbor::data::{IanaTag, Tag};
-use rug::ops::NegAssign;
-
-use crate::data::PlutusData;
 
 use super::Ctx;
 
@@ -73,12 +72,10 @@ impl<'a, 'b> minicbor::decode::Decode<'b, Ctx<'a>> for &'a PlutusData<'a> {
                             bytes.extend_from_slice(chunk);
                         }
 
-                        let integer = ctx
-                            .arena
-                            .alloc(rug::Integer::from_digits(&bytes, rug::integer::Order::Msf));
+                        let integer = ctx.arena.alloc(Integer::from(UBig::from_be_bytes(&bytes)));
 
                         if x == IanaTag::NegBignum {
-                            integer.neg_assign();
+                            *integer = -integer.clone();
                         }
 
                         Ok(PlutusData::integer(ctx.arena, integer))
