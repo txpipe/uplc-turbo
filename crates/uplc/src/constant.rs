@@ -1,6 +1,6 @@
-use bumpalo::Bump;
-
 use crate::{binder::Eval, data::PlutusData, machine::MachineError, typ::Type};
+use bumpalo::Bump;
+use ibig::UBig;
 
 #[derive(Debug, PartialEq)]
 pub enum Constant<'a> {
@@ -30,6 +30,16 @@ pub fn integer(arena: &Bump) -> &mut Integer {
 
 pub fn integer_from(arena: &Bump, i: i128) -> &mut Integer {
     arena.alloc(Integer::from(i))
+}
+
+pub fn integer_from_bytes_and_sign<'a>(arena: &'a Bump, bytes: &[u8], sign: i8) -> &'a mut Integer {
+    let ubig = UBig::from_be_bytes(bytes);
+
+    if sign < 0 {
+        arena.alloc(-Integer::from(ubig))
+    } else {
+        arena.alloc(Integer::from(ubig))
+    }
 }
 
 impl<'a> Constant<'a> {
