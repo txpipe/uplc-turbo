@@ -739,6 +739,28 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fb37767f6569cd834a413442455e0f066d0d522de8630436e2a1761d9726ba56"
 
 [[package]]
+name = "pallas-uplc"
+version = "0.1.0"
+dependencies = [
+ "blst",
+ "bumpalo",
+ "chumsky",
+ "criterion",
+ "cryptoxide",
+ "ibig",
+ "insta",
+ "itertools 0.13.0",
+ "minicbor",
+ "num-traits",
+ "once_cell",
+ "ouroboros",
+ "pretty_assertions",
+ "secp256k1",
+ "thiserror",
+ "uplc_macros",
+]
+
+[[package]]
 name = "plotters"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -772,7 +794,7 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "miette",
- "uplc-turbo",
+ "pallas-uplc",
 ]
 
 [[package]]
@@ -1168,28 +1190,6 @@ name = "unicode-width"
 version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7dd6e30e90baa6f72411720665d41d89b9a3d039dc45b8faea1ddd07f617f6af"
-
-[[package]]
-name = "uplc-turbo"
-version = "0.1.0"
-dependencies = [
- "blst",
- "bumpalo",
- "chumsky",
- "criterion",
- "cryptoxide",
- "ibig",
- "insta",
- "itertools 0.13.0",
- "minicbor",
- "num-traits",
- "once_cell",
- "ouroboros",
- "pretty_assertions",
- "secp256k1",
- "thiserror",
- "uplc_macros",
-]
 
 [[package]]
 name = "uplc_macros"

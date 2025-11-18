@@ -4,10 +4,10 @@ members = ["crates/*"]
 
 [workspace.package]
 version = "0.1.0"
-description = "An attempt at a faster UPLC evaluator"
+description = "A fork of the uplc-turbo crate tailored for usage within Pallas"
 edition = "2021"
 license = "Apache-2.0"
-authors = ["Lucas Rosa <x@rvcas.dev>"]
-repository = "https://github.com/pragma-org/uplc"
-homepage = "https://github.com/pragma-uplc/uplc"
-documentation = "https://docs.rs/uplc-turbo"
+authors = ["TxPipe <hello@txpipe.io>"]
+repository = "https://github.com/txpipe/uplc-turbo"
+homepage = "https://github.com/txpipe/uplc-turbo"
+documentation = "https://docs.rs/pallas-uplc"

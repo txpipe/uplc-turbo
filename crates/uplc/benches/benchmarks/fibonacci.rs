@@ -1,7 +1,7 @@
 use bumpalo::Bump;
 use criterion::{criterion_group, Criterion};
 
-use uplc_turbo::{binder::DeBruijn, term::Term};
+use pallas_uplc::{binder::DeBruijn, term::Term};
 
 use super::utils;
 
