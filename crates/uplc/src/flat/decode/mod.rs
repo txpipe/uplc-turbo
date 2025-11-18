@@ -208,14 +208,71 @@ fn decode_constant<'a>(
         }
         Type::Unit => Ok(Constant::unit(ctx.arena)),
         Type::List(sub_typ) => {
-            let fields = d.list_with(ctx, |ctx, d| decode_constant(ctx, d))?;
+            let fields = d.list_with(ctx, |ctx, d| decode_constant_value(ctx, d, sub_typ))?;
             let fields = ctx.arena.alloc(fields);
 
             Ok(Constant::proto_list(ctx.arena, sub_typ, fields))
         }
         Type::Pair(sub_typ1, sub_typ2) => {
-            let fst = decode_constant(ctx, d)?;
-            let snd = decode_constant(ctx, d)?;
+            let fst = decode_constant_value(ctx, d, sub_typ1)?;
+            let snd = decode_constant_value(ctx, d, sub_typ2)?;
+
+            Ok(Constant::proto_pair(
+                ctx.arena, sub_typ1, sub_typ2, fst, snd,
+            ))
+        }
+        Type::Data => {
+            let cbor = d.bytes(ctx.arena)?;
+            let data = minicbor::decode_with(&cbor, ctx)?;
+
+            Ok(Constant::data(ctx.arena, data))
+        }
+        Type::Bls12_381G1Element => Err(FlatDecodeError::BlsTypeNotSupported),
+        Type::Bls12_381G2Element => Err(FlatDecodeError::BlsTypeNotSupported),
+        Type::Bls12_381MlResult => Err(FlatDecodeError::BlsTypeNotSupported),
+    }
+}
+
+// Decode a constant value without reading type tags (type is already known)
+fn decode_constant_value<'a>(
+    ctx: &mut Ctx<'a>,
+    d: &mut Decoder,
+    ty: &'a Type<'a>,
+) -> Result<&'a Constant<'a>, FlatDecodeError> {
+    match ty {
+        Type::Integer => {
+            let v = d.integer()?;
+            let v = ctx.arena.alloc(v);
+
+            Ok(Constant::integer(ctx.arena, v))
+        }
+        Type::ByteString => {
+            let b = d.bytes(ctx.arena)?;
+            let b = ctx.arena.alloc(b);
+
+            Ok(Constant::byte_string(ctx.arena, b))
+        }
+        Type::Bool => {
+            let v = d.bit()?;
+
+            Ok(Constant::bool(ctx.arena, v))
+        }
+        Type::String => {
+            let s = d.utf8(ctx.arena)?;
+            let s = ctx.arena.alloc(s);
+
+            Ok(Constant::string(ctx.arena, s))
+        }
+        Type::Unit => Ok(Constant::unit(ctx.arena)),
+        Type::List(sub_typ) => {
+            let fields = d.list_with(ctx, |ctx, d| decode_constant_value(ctx, d, sub_typ))?;
+            let fields = ctx.arena.alloc(fields);
+
+            Ok(Constant::proto_list(ctx.arena, sub_typ, fields))
+        }
+        Type::Pair(sub_typ1, sub_typ2) => {
+            let fst = decode_constant_value(ctx, d, sub_typ1)?;
+            let snd = decode_constant_value(ctx, d, sub_typ2)?;
 
             Ok(Constant::proto_pair(
                 ctx.arena, sub_typ1, sub_typ2, fst, snd,
